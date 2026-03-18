@@ -180,7 +180,7 @@ function callGrokDirect(msgs, key) {
 }
 
 // ── ALL FREE AI MODELS VIA OPENROUTER ──
-var OR_KEY = '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';
+var OR_KEY = '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';
 // OpenRouter free models
 var OR_MODELS = {
   'deepseek':  'nousresearch/hermes-3-llama-3.1-405b:free',
