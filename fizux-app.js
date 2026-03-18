@@ -180,7 +180,7 @@ function callGrokDirect(msgs, key) {
 }
 
 // ── ALL FREE AI MODELS VIA OPENROUTER ──
-var OR_KEY = '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';
+var OR_KEY = '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';
 // OpenRouter free models
 var OR_MODELS = {
   'deepseek':  'deepseek/deepseek-chat-v3-0324:free',
