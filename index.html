@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FIZUX"/>
+<meta name="theme-color" content="#C9A84C"/>
+<title>FIZUX — AI Universe</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon.png"/>
+<link rel="icon" type="image/png" href="icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0A0A0F;--surface:#111118;--card:#16161E;--card2:#1C1C26;
+  --border:#2A2A3A;--borderLight:#363648;
+  --text:#F0F0FF;--textSub:#A0A0C0;--textMuted:#606080;--textDim:#383850;
+  --accent:#C9A84C;--accentSoft:rgba(201,168,76,0.12);--accentGlow:rgba(201,168,76,0.25);
+  --purple:#8B6FE8;--blue:#4A9EFF;--green:#2ECC8A;--red:#FF4D6A;
+  --orange:#FF8C42;--pink:#FF6B9D;
+  --gradGold:linear-gradient(135deg,#C9A84C,#E8C96B);
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadowLg:0 8px 48px rgba(0,0,0,0.6);
+  --shadowGold:0 4px 20px rgba(201,168,76,0.3);
+  --radius:16px;--radiusSm:10px;
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  --fontMono:'DM Mono',monospace;
+  --fontDisplay:'Syne',system-ui,sans-serif;
+  --fontSize:14px;
+}
+[data-theme="light"]{
+  --bg:#F8F8FC;--surface:#FFFFFF;--card:#FFFFFF;--card2:#F0F0F8;
+  --border:#E0E0EE;--borderLight:#D0D0E0;
+  --text:#0A0A1A;--textSub:#444460;--textMuted:#888890;--textDim:#C0C0CC;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+  --shadowLg:0 8px 32px rgba(0,0,0,0.12);
+  --accentSoft:rgba(201,168,76,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:var(--fontSize);}
+#root{width:100%;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+input,textarea,button{font-family:var(--font);}
+button{cursor:pointer;border:none;outline:none;}
+input,textarea{outline:none;border:none;}
+textarea{resize:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+.spinner{width:18px;height:18px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+// Storage API
+window.storage = {
+  async get(key, shared) {
+    try {
+      var v = localStorage.getItem((shared?'sh_':'lc_')+key);
+      if(v === null) throw new Error('not_found');
+      return {key: key, value: v, shared: !!shared};
+    } catch(e) { throw e; }
+  },
+  async set(key, value, shared) {
+    try {
+      localStorage.setItem((shared?'sh_':'lc_')+key, typeof value==='string' ? value : JSON.stringify(value));
+      return {key: key, value: value, shared: !!shared};
+    } catch(e) { return null; }
+  },
+  async delete(key, shared) {
+    try { localStorage.removeItem((shared?'sh_':'lc_')+key); return {key: key, deleted: true}; }
+    catch(e) { return null; }
+  },
+  async list(prefix, shared) {
+    try {
+      var p = (shared?'sh_':'lc_')+prefix;
+      var keys = Object.keys(localStorage).filter(function(k){return k.startsWith(p);}).map(function(k){return k.replace(/^(sh_|lc_)/,'');});
+      return {keys: keys};
+    } catch(e) { return {keys:[]}; }
+  }
+};
+
+// PWA
+window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._pwa = e; });
+if('serviceWorker' in navigator) {
+  window.addEventListener('load', function() { navigator.serviceWorker.register('./sw.js').catch(function(){}); });
+}
+</script>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+<script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="text/babel" src="./fizux-app.js" data-presets="react"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<script>
+  // GitHub Pages SPA redirect
+  var seg = window.location.pathname.replace('/FIZUX','');
+  window.location.replace('/FIZUX/' + (seg.length > 1 ? '?p=' + seg.slice(1) : ''));
+</script>
+</head>
+<body>Redirecting...</body>
+</html>
